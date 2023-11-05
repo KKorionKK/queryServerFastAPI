@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  fastapi:
+    container_name: fastapi
+    build:
+      context: ./
+    depends_on:
+      - redis-database
+    ports:
+      - "8000:8000"
+    restart: always
+    command: sh -c "python3 app.py initdb && python3 app.py run"
+    networks:
+      - app-network
+  redis-database:
+    container_name: redis-database
+    image: redis:latest
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - app-network
+
+networks:
+  app-network:
